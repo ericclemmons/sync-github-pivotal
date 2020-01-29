@@ -1,0 +1,11 @@
+{
+  "name": "sync-github-pivotal",
+  "version": "0.0.0",
+  "description": "A fresh new Architect project!",
+  "scripts": {
+    "start": "npx sandbox"
+  },
+  "devDependencies": {
+    "@architect/architect": "^6.1.7"
+  }
+}
