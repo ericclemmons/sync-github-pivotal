@@ -32,7 +32,7 @@
 ## Getting Started
 
 1. `yarn`
-1. `yarn start` will open <http://localhost:3000>
+1. `yarn dev` will open <http://localhost:3000>
 1. `yarn tunnel` in another terminal to create an external tunnel (e.g. <https://5a7811ca.ngrok.io/api/github>):
 
    > Dashboard: http://localhost:4040/inspect/http
