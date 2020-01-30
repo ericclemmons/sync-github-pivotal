@@ -4,9 +4,17 @@ import got, { ResponseObject } from "got";
 import { NextApiRequest, NextApiResponse } from "next";
 import getRawBody from "raw-body";
 
+const {
+  GITHUB_ISSUES_URL,
+  GITHUB_WEBHOOK_SECRET,
+  PIVOTAL_INTEGRATION_NAME,
+  PIVOTAL_PROJECT_ID,
+  PIVOTAL_TRACKER_TOKEN
+} = process.env;
+
 const pivotal = got.extend({
   headers: {
-    "X-TrackerToken": process.env.PIVOTAL_TRACKER_TOKEN
+    "X-TrackerToken": PIVOTAL_TRACKER_TOKEN
   },
   prefixUrl: "https://www.pivotaltracker.com/services/v5"
 });
@@ -25,7 +33,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const rawBody = await getRawBody(req);
   const expectedSignature =
     "sha1=" +
-    createHmac("sha1", process.env.GITHUB_WEBHOOK_SECRET)
+    createHmac("sha1", GITHUB_WEBHOOK_SECRET)
       .update(rawBody)
       .digest("hex");
 
@@ -43,7 +51,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_get
       const existing = (await pivotal(
-        `projects/${process.env.PIVOTAL_PROJECT_ID}/stories?filter=external_id:${issue.number}`
+        `projects/${PIVOTAL_PROJECT_ID}/stories?filter=external_id:${issue.number}`
       ).json()) as any[];
 
       if (existing.length) {
@@ -54,13 +62,36 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
           );
       }
 
+      // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_integrations_get
+      const integrations = (await pivotal(
+        `projects/${PIVOTAL_PROJECT_ID}/integrations`
+      ).json()) as any[];
+
+      // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_integrations_post
+      const integration =
+        integrations.find(
+          integration => integration.name === PIVOTAL_INTEGRATION_NAME
+        ) ??
+        (await pivotal
+          .post(`projects/${PIVOTAL_PROJECT_ID}/integrations`, {
+            json: {
+              active: true,
+              base_url: GITHUB_ISSUES_URL,
+              name: PIVOTAL_INTEGRATION_NAME,
+              project_id: PIVOTAL_PROJECT_ID,
+              type: "other"
+            }
+          })
+          .json());
+
       // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_post
       response = await pivotal
-        .post(`projects/${process.env.PIVOTAL_PROJECT_ID}/stories`, {
+        .post(`projects/${PIVOTAL_PROJECT_ID}/stories`, {
           json: {
-            // external_id: "issue.number",
             created_at: issue.created_at,
             description: issue.body,
+            external_id: JSON.stringify(issue.number),
+            integration_id: integration.id,
             name: issue.title
           }
         })
