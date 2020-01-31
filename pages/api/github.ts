@@ -109,11 +109,14 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
+  // TODO Use Boom (https://hapi.dev/family/boom/api) for abstracting errors & response codes out
   handle(req, res).catch(error => {
     console.error(error.response);
-    res
-      .status(error.response?.statusCode ?? 500)
-      .json(error.response?.body ?? { message: error.message });
+    res.status(error.response?.statusCode ?? 500).json(
+      error.response?.body ?? {
+        message: error.message
+      }
+    );
   });
 };
 
