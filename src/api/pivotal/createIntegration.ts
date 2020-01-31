@@ -1,7 +1,7 @@
-import { pivotal } from "./pivotal";
+import { api } from "./api";
 
 export const createIntegration = () => {
-  return pivotal
+  return api
     .post(`projects/${process.env.PIVOTAL_PROJECT_ID}/integrations`, {
       json: {
         active: true,

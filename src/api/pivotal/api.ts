@@ -1,6 +1,6 @@
 import got from "got";
 
-export const pivotal = got.extend({
+export const api = got.extend({
   headers: {
     "X-TrackerToken": process.env.PIVOTAL_TRACKER_TOKEN
   },
