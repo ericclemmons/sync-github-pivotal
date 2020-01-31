@@ -42,11 +42,11 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const body = JSON.parse(rawBody.toString("utf8"));
+  const eventAction = `${req.headers["x-github-event"]}.${body.action}`;
   let response: ResponseObject = undefined;
 
-  // ? Should `X-GitHub-Event` (e.g. `issues`) be used here as well?
-  switch (body.action) {
-    case "opened":
+  switch (eventAction) {
+    case "issues.opened":
       const { issue } = body;
 
       // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_get
@@ -102,7 +102,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     default:
       return res
         .status(501)
-        .json({ message: `${JSON.stringify(body.action)} is not implemented` });
+        .json({ message: `${eventAction} is not implemented` });
   }
 
   res.status(200).json(response ?? { message: "Success" });
