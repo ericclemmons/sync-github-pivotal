@@ -16,12 +16,11 @@ export const handler = async (req: Request, res: Response) => {
 
   // https://developer.github.com/v3/activity/events/types/#issuesevent
   if (event === "issues") {
+    const { issue } = payload;
+    // https://www.pivotaltracker.com/help/api/rest/v5#story_resource
+    const story = await findStoryByIssueNumber(issue.number);
+
     if (action === "edited") {
-      const { issue } = payload;
-
-      // https://www.pivotaltracker.com/help/api/rest/v5#story_resource
-      const story = await findStoryByIssueNumber(issue.number);
-
       // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_story_id_put
       return await api
         .put(`projects/${process.env.PIVOTAL_PROJECT_ID}/stories/${story.id}`, {
@@ -39,10 +38,22 @@ export const handler = async (req: Request, res: Response) => {
         .json();
     }
 
-    if (action === "opened") {
-      const { issue } = payload;
-      const story = await findStoryByIssueNumber(issue.number);
+    if (action === "labeled" || action === "unlabeled") {
+      const labels = payload.issue.labels.map(label => label.name);
 
+      return await api
+        .put(
+          `/projects/${process.env.PIVOTAL_PROJECT_ID}/stories/${story.id}`,
+          {
+            json: {
+              labels
+            }
+          }
+        )
+        .json();
+    }
+
+    if (action === "opened") {
       if (story) {
         throw conflict(
           `GitHub issue #${issue.number} has an existin story: ${story.url}`
