@@ -1,5 +1,9 @@
 import { conflict, notImplemented } from "@hapi/boom";
-import { WebhookPayloadIssues } from "@octokit/webhooks";
+import {
+  WebhookPayloadIssues,
+  WebhookPayloadMilestone,
+  WebhookPayloadIssuesIssue
+} from "@octokit/webhooks";
 import { Request, Response } from "express";
 
 import {
@@ -11,12 +15,12 @@ import {
 
 export const handler = async (req: Request, res: Response) => {
   const event = req.headers["x-github-event"];
-  const payload = req.body as WebhookPayloadIssues;
+  const payload = req.body as WebhookPayloadIssues | WebhookPayloadMilestone;
   const { action } = payload;
 
   // https://developer.github.com/v3/activity/events/types/#issuesevent
   if (event === "issues") {
-    const { issue } = payload;
+    const { issue } = payload as WebhookPayloadIssues;
     // https://www.pivotaltracker.com/help/api/rest/v5#story_resource
     const story = await findStoryByIssueNumber(issue.number);
 
@@ -69,6 +73,23 @@ export const handler = async (req: Request, res: Response) => {
             external_id: JSON.stringify(issue.number),
             integration_id: integration.id,
             name: issue.title
+          }
+        })
+        .json();
+    }
+  }
+
+  if (event === "milestone") {
+    const { milestone } = payload as WebhookPayloadMilestone;
+
+    if (action === "created") {
+      // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_epics_post
+      return api
+        .post("epics", {
+          json: {
+            name: milestone.title,
+            label: { name: milestone.title },
+            description: milestone.description
           }
         })
         .json();
