@@ -88,6 +88,21 @@ export const handler = async (req: Request, res: Response) => {
     if (action === "created") {
       return findOrCreateEpicFromMilestone(milestone);
     }
+
+    if (action === "edited") {
+      const epic = await findOrCreateEpicFromMilestone(milestone);
+
+      // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_epics_epic_id_put
+      return api
+        .put(`epics/${epic.id}`, {
+          json: {
+            name: milestone.title,
+            // label: { name: milestone.title },
+            description: milestone.description
+          }
+        })
+        .json();
+    }
   }
 
   throw notImplemented(`${event}.${action} is not implemented`);
