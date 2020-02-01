@@ -31,19 +31,17 @@ export const handler = async (req: Request, res: Response) => {
           json: {
             // Update title if issue.title changed
             // @ts-ignore because definition doesn't have title
-            name: payload.changes.title ? payload.issue.title : story.name,
+            name: payload.changes.title ? issue.title : story.name,
             // Update description if issue.body changed
             // @ts-ignore because definition doesn't have body
-            description: payload.changes.body
-              ? payload.issue.body
-              : story.description
+            description: payload.changes.body ? issue.body : story.description
           }
         })
         .json();
     }
 
     if (action === "labeled" || action === "unlabeled") {
-      const labels = payload.issue.labels.map(label => label.name);
+      const labels = issue.labels.map(label => label.name);
 
       return await api
         .put(`stories/${story.id}`, {
