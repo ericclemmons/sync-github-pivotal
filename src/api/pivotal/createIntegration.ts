@@ -2,7 +2,7 @@ import { api } from "./api";
 
 export const createIntegration = () => {
   return api
-    .post(`projects/${process.env.PIVOTAL_PROJECT_ID}/integrations`, {
+    .post("integrations", {
       json: {
         active: true,
         base_url: process.env.GITHUB_ISSUES_URL,

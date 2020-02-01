@@ -23,7 +23,7 @@ export const handler = async (req: Request, res: Response) => {
     if (action === "edited") {
       // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_story_id_put
       return await api
-        .put(`projects/${process.env.PIVOTAL_PROJECT_ID}/stories/${story.id}`, {
+        .put(`stories/${story.id}`, {
           json: {
             // Update title if issue.title changed
             // @ts-ignore because definition doesn't have title
@@ -42,14 +42,11 @@ export const handler = async (req: Request, res: Response) => {
       const labels = payload.issue.labels.map(label => label.name);
 
       return await api
-        .put(
-          `/projects/${process.env.PIVOTAL_PROJECT_ID}/stories/${story.id}`,
-          {
-            json: {
-              labels
-            }
+        .put(`stories/${story.id}`, {
+          json: {
+            labels
           }
-        )
+        })
         .json();
     }
 
@@ -65,7 +62,7 @@ export const handler = async (req: Request, res: Response) => {
       // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_post
 
       return await api
-        .post(`projects/${process.env.PIVOTAL_PROJECT_ID}/stories`, {
+        .post("stories", {
           json: {
             created_at: issue.created_at,
             description: issue.body,
