@@ -1,8 +1,7 @@
 import { conflict, notImplemented } from "@hapi/boom";
 import {
   WebhookPayloadIssues,
-  WebhookPayloadMilestone,
-  WebhookPayloadIssuesIssue
+  WebhookPayloadMilestone
 } from "@octokit/webhooks";
 import { Request, Response } from "express";
 
@@ -10,7 +9,9 @@ import {
   api,
   createIntegration,
   findIntegration,
-  findStoryByIssueNumber
+  findOrCreateEpicFromMilestone,
+  findStoryByIssueNumber,
+  PivotalLabel
 } from "../pivotal";
 
 export const handler = async (req: Request, res: Response) => {
@@ -43,13 +44,17 @@ export const handler = async (req: Request, res: Response) => {
     if (action === "labeled" || action === "unlabeled") {
       const labels = issue.labels.map(label => label.name);
 
-      return await api
-        .put(`stories/${story.id}`, {
-          json: {
-            labels
-          }
-        })
-        .json();
+      return await api.put(`stories/${story.id}`, { json: { labels } }).json();
+    }
+
+    if (action === "milestoned") {
+      const { milestone } = issue;
+      const epic = await findOrCreateEpicFromMilestone(milestone);
+      const labels = story.labels
+        .map((label: PivotalLabel) => label.name)
+        .concat(epic.label.name);
+
+      return await api.put(`stories/${story.id}`, { json: { labels } }).json();
     }
 
     if (action === "opened") {
@@ -81,16 +86,7 @@ export const handler = async (req: Request, res: Response) => {
     const { milestone } = payload as WebhookPayloadMilestone;
 
     if (action === "created") {
-      // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_epics_post
-      return api
-        .post("epics", {
-          json: {
-            name: milestone.title,
-            label: { name: milestone.title },
-            description: milestone.description
-          }
-        })
-        .json();
+      return findOrCreateEpicFromMilestone(milestone);
     }
   }
 
