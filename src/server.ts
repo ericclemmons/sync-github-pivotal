@@ -9,13 +9,16 @@ export const server = express()
   .use("/api", api)
   .use(
     (error: Boom | Error, req: Request, res: Response, next: NextFunction) => {
-      const boom = isBoom(error)
-        ? (error as Boom)
-        : boomify(error, {
-            // @ts-ignore
-            // https://github.com/sindresorhus/got#usage
-            data: JSON.parse(error.response?.body ?? null)
-          });
+      let data;
+
+      try {
+        // @ts-ignore
+        // https://github.com/sindresorhus/got#usage
+        data = error.response?.body ?? "null";
+        data = JSON.parse(data);
+      } catch (error) {}
+
+      const boom = isBoom(error) ? (error as Boom) : boomify(error, { data });
 
       if (boom.isServer) {
         console.error(boom);
