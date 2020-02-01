@@ -21,6 +21,9 @@ export const middleware = express()
   .use(verifySignature)
   .use((req, res, next) =>
     handler(req, res)
-      .then(result => res.json(result))
+      .then(result => {
+        console.info(result);
+        res.json(result);
+      })
       .catch(error => next(error))
   );
