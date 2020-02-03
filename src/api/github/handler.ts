@@ -1,7 +1,8 @@
 import { conflict, notImplemented } from "@hapi/boom";
 import {
   WebhookPayloadIssues,
-  WebhookPayloadMilestone
+  WebhookPayloadMilestone,
+  WebhookPayloadMilestoneMilestone
 } from "@octokit/webhooks";
 import { Request, Response } from "express";
 
@@ -24,6 +25,16 @@ export const handler = async (req: Request, res: Response) => {
     const { issue } = payload as WebhookPayloadIssues;
     // https://www.pivotaltracker.com/help/api/rest/v5#story_resource
     const story = await findStoryByIssueNumber(issue.number);
+
+    if (action === "demilestoned") {
+      // @ts-ignore Property 'milestone' does not exist on type 'WebhookPayloadIssues'
+      const milestone = payload.milestone as WebhookPayloadMilestoneMilestone;
+      const labels = story.labels.filter((label: PivotalLabel) => {
+        return label.name !== milestone.title.toLowerCase();
+      });
+
+      return await api.put(`stories/${story.id}`, { json: { labels } }).json();
+    }
 
     if (action === "edited") {
       // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_story_id_put
