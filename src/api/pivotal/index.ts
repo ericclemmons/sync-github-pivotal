@@ -1,10 +1,9 @@
 import express from "express";
 
 export { api } from "./api";
-export { createIntegration } from "./createIntegration";
-export { findIntegration } from "./findIntegration";
+export { findOrCreateIntegration } from "./findOrCreateIntegration";
 export { findOrCreateEpicFromMilestone } from "./findOrCreateEpicFromMilestone";
-export { findStoryByIssueNumber } from "./findStoryByIssueNumber";
+export { findOrCreateStoryFromIssue } from "./findOrCreateStoryFromIssue";
 
 // TODO Pivotal webhook
 export const middleware = express();

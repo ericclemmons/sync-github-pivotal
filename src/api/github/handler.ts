@@ -11,7 +11,7 @@ import {
   createIntegration,
   findIntegration,
   findOrCreateEpicFromMilestone,
-  findStoryByIssueNumber,
+  findOrCreateStoryFromIssue,
   PivotalLabel
 } from "../pivotal";
 
@@ -24,7 +24,7 @@ export const handler = async (req: Request, res: Response) => {
   if (event === "issues") {
     const { issue } = payload as WebhookPayloadIssues;
     // https://www.pivotaltracker.com/help/api/rest/v5#story_resource
-    const story = await findStoryByIssueNumber(issue.number);
+    const story = await findOrCreateStoryFromIssue(issue);
 
     if (action === "demilestoned") {
       // @ts-ignore Property 'milestone' does not exist on type 'WebhookPayloadIssues'
@@ -69,27 +69,7 @@ export const handler = async (req: Request, res: Response) => {
     }
 
     if (action === "opened") {
-      if (story) {
-        throw conflict(
-          `GitHub issue #${issue.number} has an existin story: ${story.url}`
-        );
-      }
-
-      const integration =
-        (await findIntegration()) ?? (await createIntegration());
-      // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_post
-
-      return await api
-        .post("stories", {
-          json: {
-            created_at: issue.created_at,
-            description: issue.body,
-            external_id: JSON.stringify(issue.number),
-            integration_id: integration.id,
-            name: issue.title
-          }
-        })
-        .json();
+      return story;
     }
   }
 
