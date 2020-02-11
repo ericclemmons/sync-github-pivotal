@@ -1,11 +1,11 @@
 import { api } from "./api";
 
 import { WebhookPayloadIssuesIssue } from "@octokit/webhooks";
-import { findOrCreateIntegration } from "../pivotal";
+import { findOrCreateIntegration, PivotalStory } from "./";
 
 export const findOrCreateStoryFromIssue = async (
   issue: WebhookPayloadIssuesIssue
-) => {
+): Promise<PivotalStory> => {
   // https://www.pivotaltracker.com/help/api/rest/v5#projects_project_id_stories_get
   const [story] = (await api(
     `stories?filter=external_id:${issue.number}`
