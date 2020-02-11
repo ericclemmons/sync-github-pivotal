@@ -51,18 +51,12 @@ export const handler = async (req: Request, res: Response) => {
         .json();
     }
 
-    if (action === "labeled" || action === "unlabeled") {
+    if (
+      action === "labeled" ||
+      action === "unlabeled" ||
+      action === "milestoned"
+    ) {
       return await updateStoryFromIssue(story, issue);
-    }
-
-    if (action === "milestoned") {
-      const { milestone } = issue;
-      const epic = await findOrCreateEpicFromMilestone(milestone);
-      const labels = story.labels
-        .map((label: PivotalLabel) => label.name)
-        .concat(epic.label.name);
-
-      return await api.put(`stories/${story.id}`, { json: { labels } }).json();
     }
 
     if (action === "opened") {
