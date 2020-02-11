@@ -1,4 +1,4 @@
-import { conflict, notImplemented } from "@hapi/boom";
+import { notImplemented } from "@hapi/boom";
 import {
   WebhookPayloadIssues,
   WebhookPayloadMilestone,
@@ -8,11 +8,10 @@ import { Request, Response } from "express";
 
 import {
   api,
-  createIntegration,
-  findIntegration,
   findOrCreateEpicFromMilestone,
   findOrCreateStoryFromIssue,
-  PivotalLabel
+  PivotalLabel,
+  updateStoryFromIssue
 } from "../pivotal";
 
 export const handler = async (req: Request, res: Response) => {
@@ -53,9 +52,7 @@ export const handler = async (req: Request, res: Response) => {
     }
 
     if (action === "labeled" || action === "unlabeled") {
-      const labels = issue.labels.map(label => label.name);
-
-      return await api.put(`stories/${story.id}`, { json: { labels } }).json();
+      return await updateStoryFromIssue(story, issue);
     }
 
     if (action === "milestoned") {
