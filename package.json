@@ -1,7 +1,7 @@
 {
   "name": "sync-github-pivotal",
   "version": "0.0.0",
-  "description": "A fresh new Architect project!",
+  "description": "Bi-directional syncing between Pivotal Tracker & GitHub Issues",
   "scripts": {
     "start": "tsnd src/server.ts",
     "tunnel": "ngrok http 3000"
