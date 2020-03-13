@@ -2,37 +2,34 @@
 
 > Bi-directional syncing between Pivotal Tracker &amp; GitHub Issues
 
-### Open Questions
+### How it Works
 
-- What do GitHub issues equate to? Pivotal Stories?
-- What do GitHub PRs equate to? Links/Attachments in Pivotal Stories?
-- What do GitHub Milestones equate to? Pivotal Epics?
-- What do GitHub labels equate to? Pivotal Labels?
-- What does Pivotal Story Points equate to? (Nothing)
-- What do Pivotal Epics equate to? (GitHub Milestone? Single GitHub Issue with Epic label?)
-- How to equate Pivotal Story Status with Issues/PRs?
-- How to associate PR’s associate Issue with Pivotal?
+**GitHub is the source of truth:**
 
-### Prototype
-
-- CLI to run some commands manually?
-- Simple HTTP server (arc.codes? amplify function? There’ll be fallout if I don’t use Amplify)
-- Local end-point testing? (ngrok?)
-  - https://developer.github.com/webhooks/configuring/
-- Pivotal webhook.
-- GitHub webhook.
-
-### Use-Cases
-
-- When a New GitHub Issue is created, create a Pivotal Story with external_id.
+- When a New GitHub Issue is created, create a Pivotal Story with `external_id`.
 - When a New GitHub Milestone is created, create a Pivotal Epic.
 - When a GitHub Issue is assigned to a GitHub MileStone, assign Pivotal Story to Epic.
 - When a GitHub Milestone is updated, update Pivotal Epic.
+- When a GitHub Label is assigned, create & assign label in Pivotal.
+- Sync GitHub Issue descriptions with Pivotal Story.
+
+### What's Missing
+
+- Sync Pivotal back to GitHub
 
 ## Getting Started
 
+0. `cp .env.example .env` and [adjust accordingly](/.env.example)
 1. `yarn`
 1. `yarn start` will open <http://localhost:3000>
 1. `yarn tunnel` in another terminal to create an external tunnel (e.g. <https://5a7811ca.ngrok.io/api/github>):
 
    > Dashboard: http://localhost:4040/inspect/http
+
+1. Add webhook to GitHub (e.g. https://github.com/ORG/REPO/settings/hooks/new) with the following permissions:
+
+   - Issues
+   - Milestones
+   - Pull Requests
+   - Pull request reviews
+   - Pull request review comments
