@@ -19,7 +19,8 @@
 
 ## Getting Started
 
-0. `cp .env.example .env` and [adjust accordingly](/.env.example)
+0. Fork or Clone this project.
+1. `cp .env.example .env` and [adjust accordingly](/.env.example)
 1. `yarn`
 1. `yarn start` will open <http://localhost:3000>
 1. `yarn tunnel` in another terminal to create an external tunnel (e.g. <https://5a7811ca.ngrok.io/api/github>):
@@ -27,6 +28,8 @@
    > Dashboard: http://localhost:4040/inspect/http
 
 1. Add webhook to GitHub (e.g. https://github.com/ORG/REPO/settings/hooks/new) with the following permissions:
+
+   _Use your `ngrok` tunnel URL (e.g. https://••••.ngrok.io/api/github) until you push to production._
 
    - Issues
    - Milestones
