@@ -6,12 +6,12 @@
 
 **GitHub is the source of truth:**
 
-- When a New GitHub Issue is created, create a Pivotal Story with `external_id`.
-- When a New GitHub Milestone is created, create a Pivotal Epic.
-- When a GitHub Issue is assigned to a GitHub MileStone, assign Pivotal Story to Epic.
-- When a GitHub Milestone is updated, update Pivotal Epic.
-- When a GitHub Label is assigned, create & assign label in Pivotal.
-- Sync GitHub Issue descriptions with Pivotal Story.
+- [x] When a New GitHub Issue is created, create a Pivotal Story with `external_id`.
+- [x] When a New GitHub Milestone is created, create a Pivotal Epic.
+- [x] When a GitHub Issue is assigned to a GitHub MileStone, assign Pivotal Story to Epic.
+- [x] When a GitHub Milestone is updated, update Pivotal Epic.
+- [x] When a GitHub Label is assigned, create & assign label in Pivotal.
+- [x] Sync GitHub Issue descriptions with Pivotal Story.
 
 ### What's Missing
 
