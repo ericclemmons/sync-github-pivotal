@@ -1,4 +1,6 @@
+.build
 .env
 .next
+.serverless
 node_modules
 yarn-error.log

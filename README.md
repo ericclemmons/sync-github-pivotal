@@ -29,10 +29,23 @@
 
 1. Add webhook to GitHub (e.g. https://github.com/ORG/REPO/settings/hooks/new) with the following permissions:
 
-   _Use your `ngrok` tunnel URL (e.g. https://••••.ngrok.io/api/github) until you push to production._
+   _Use your `ngrok` tunnel URL (e.g. https://••••.ngrok.io/dev/github) until you push to production._
 
    - Issues
    - Milestones
    - Pull Requests
    - Pull request reviews
    - Pull request review comments
+
+## Deploying
+
+0. Create a `sync-github-pivotal` profile in `~/.aws/credentials`:
+
+   ```ini
+   [sync-github-pivotal]
+   aws_access_key_id=••••••••
+   aws_secret_access_key=••••••••••••••••
+   ```
+
+1. `yarn deploy`
+1. Update your webhook to https://••••.execute-api.us-east-1.amazonaws.com/prod/github

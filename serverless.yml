@@ -1,0 +1,18 @@
+service: sync-github-pivotal
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+  - serverless-plugin-typescript
+
+provider:
+  name: aws
+  profile: sync-github-pivotal
+  runtime: nodejs12.x
+
+functions:
+  app:
+    handler: handler.handler
+    events:
+      - http: ANY /
+      - http: "ANY {proxy+}"
